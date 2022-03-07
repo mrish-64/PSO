@@ -1,8 +1,21 @@
+import math
+def todecimal(x,rng):
+   n=int(x,2)
+   s=x.replace('0','1') #for example convert 10010 to 11111
+   upper=int(s,2)
+   ratio=(rng[1]-rng[0])/upper
+   
+   return n*ratio+rng[0]
 def f(x,name='Sphere',dim=10):
 #x is binary string; dim is dimension of benchmark function
     if name=='Sphere':
         chunk_len=len(x)//dim
-        new_x=[todecimal(str(x[i:chunk_len+i]),rng=[-100,100]) for i in range(0, len(x), chunk_len)]
+        new_x=[]
+        for c in range(0, len(x), chunk_len):
+
+            temp=todecimal(''.join(map(str, x[c:chunk_len+c])),rng=[-100,100])
+            new_x.append(temp)
+        
         res=0
         for cntr in range(len(new_x)):
             res+=(new_x[cntr]**2)

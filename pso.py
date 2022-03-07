@@ -23,16 +23,17 @@ w = 0.8
 particl_dim = 120
 swarm_size=70
 np.random.seed(100)
-X_pos = np.round(np.random.rand(particl_dim,swarm_size) )
+X_pos = np.round(np.random.rand(particl_dim,swarm_size) ).astype(int)
 Velocity= np.random.randn( particl_dim,swarm_size) * 0.1
 
 # Initialize data
 pbest = X_pos
+pbest_obj=[]
 for i in range(swarm_size):
-    pbest_obj[i] = f(X_pos[:,i])
+    pbest_obj.append(f(X_pos[:,i]))
 
-gbest = pbest[:,pbest_obj.argmin()]
-gbest_obj = pbest_obj.min()
+gbest = pbest[:,np.array(pbest_obj).argmin()]
+gbest_obj = np.array(pbest_obj).min()
 iteration=200
 
 def update():
@@ -42,7 +43,7 @@ def update():
     r1, r2 = np.random.rand(2)
     Velocity = w * Velocity + c1*r1*(pbest - X_pos) + c2*r2*(gbest.reshape(-1,1)-X_pos)
     sigV=1/(1+(np.exp((-Velocity))))
-    X_pos = sigV > np.rand(particl_dim,swarm_size)
+    X_pos = (sigV > np.rand(particl_dim,swarm_size)).astype(int)
     for i in range(swarm_size):
         pbest_obj[i] = f(X_pos[:,i])
     pbest[(pbest_obj >= obj)] = X_pos[(pbest_obj >= obj)]
@@ -50,8 +51,7 @@ def update():
     gbest = pbest[:, pbest_obj.argmin()]
     gbest_obj = pbest_obj.min()
 
-for itr in range(iteration):
-    update()
+
 
 # Set up base figure: The contour map
 # fig, ax = plt.subplots(figsize=(8,6))
@@ -86,4 +86,4 @@ for itr in range(iteration):
 # anim.save("PSO.gif", dpi=120, writer="imagemagick")
 
 print("PSO found best solution at f({})={}".format(gbest, gbest_obj))
-print("Global optimal at f({})={}".format([x_min,y_min], f(x_min,y_min)))
+#print("Global optimal at f({})={}".format([x_min,y_min], f(x_min,y_min)))
